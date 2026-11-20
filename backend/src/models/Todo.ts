@@ -1,5 +1,27 @@
-// Issue 2: write the mongoose schema, the model and `toTodo` here.
-// Look at the Book model of Backend MongoDB: it has the same shape.
-// A todo has a `title` (a required string, trimmed) and `done` (a boolean, default `false`).
-// The types `Todo` and `NewTodo` are already in `../types.ts`.
-export {};
+import { Schema, model } from "mongoose";
+import type { HydratedDocument } from "mongoose";
+
+import type { NewTodo, Todo } from "../types";
+
+const todoSchema = new Schema<NewTodo>({
+  title: {
+    type: String,
+    required: [true, "Title is required"],
+    trim: true,
+  },
+  done: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+export const TodoModel = model("todos", todoSchema);
+
+// turns a document from the database into what the API sends: `id` instead of `_id`, no `__v`.
+export function toTodo(document: HydratedDocument<NewTodo>): Todo {
+  return {
+    id: document._id.toString(),
+    title: document.title,
+    done: document.done,
+  };
+}
