@@ -1,4 +1,5 @@
 import { mutate } from "swr";
+import { useState } from "react";
 
 import { updateTodo } from "./api";
 import type { Todo } from "./types";
@@ -8,6 +9,9 @@ type TodoItemProps = {
 };
 
 export default function TodoItem( { todo }: TodoItemProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState(todo.title);
+
   async function handleToggle() {
     await updateTodo(todo.id, { title: todo.title, done: !todo.done });
     await mutate("/todos");
@@ -19,6 +23,9 @@ export default function TodoItem( { todo }: TodoItemProps) {
         <input type="checkbox" checked={todo.done} onChange={handleToggle} />
         {todo.title}
       </label>
+      <button type="button" onClick={() => setIsEditing(true)}>
+        Edit
+      </button>
     </li>
   );
 }
