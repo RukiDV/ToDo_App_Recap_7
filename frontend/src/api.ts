@@ -14,6 +14,11 @@ export async function fetcher<T>(path: string): Promise<T> {
   return response.json();
 }
 
+async function throwApiError(response: Response): Promise<never> {
+  const body = (await response.json().catch(() => null)) as { error?: string } | null;
+  throw new Error(body?.error ?? `Request failed with status ${response.status}`);
+}
+
 export async function createTodo(title: string): Promise<Todo> {
   const response = await fetch(`${API_URL}/todos`, {
     method: "POST",
@@ -21,7 +26,7 @@ export async function createTodo(title: string): Promise<Todo> {
     body: JSON.stringify({ title }),
   });
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    await throwApiError(response);
   }
   return response.json(); 
 }
@@ -33,7 +38,7 @@ export async function updateTodo(id: string, todo: NewTodo): Promise<Todo> {
     body: JSON.stringify( todo ),
   });
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    await throwApiError(response);
   }
   return response.json();
 }
@@ -43,6 +48,6 @@ export async function deleteTodo(id: string): Promise<void> {
     method: "DELETE",
   });
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    await throwApiError(response);
   }
 }
