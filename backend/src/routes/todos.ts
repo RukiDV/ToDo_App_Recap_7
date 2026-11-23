@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { TodoModel, toTodo } from "../models/Todo";
+import type { NewTodo } from "../types";
 
 export const todosRouter = Router();
 
@@ -15,4 +16,10 @@ export const todosRouter = Router();
 todosRouter.get("/", async (request, response) => {
   const todos = await TodoModel.find();
   response.json(todos.map(toTodo));
+});
+
+todosRouter.post("/", async (request, response) => {
+  const { title } = (request.body ?? {}) as Partial<NewTodo>;
+  const todo = await TodoModel.create({ title });
+  response.status(201).json(toTodo(todo));
 });

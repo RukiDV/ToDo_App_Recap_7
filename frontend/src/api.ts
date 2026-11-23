@@ -1,3 +1,5 @@
+import type { Todo } from "./types";
+
 // The backend allows requests from http://localhost:5173 (CORS), so the frontend can call it directly.
 export const API_URL = "http://localhost:3001/api";
 
@@ -10,4 +12,16 @@ export async function fetcher<T>(path: string): Promise<T> {
     throw new Error(`Request failed with status ${response.status}`);
   }
   return response.json();
+}
+
+export async function createTodo(title: string): Promise<Todo> {
+  const response = await fetch(`${API_URL}/todos`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title }),
+  });
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}`);
+  }
+  return response.json(); 
 }
