@@ -27,7 +27,7 @@ export default function App() {
         </div>
       )}
       {!error && todos && todos.length === 0 && (
-        <p>No todos yet. Nothing to do!</p>
+        <p>No todos yet. Add your first todo above.</p>
       )}
       {!error && todos && todos.length > 0 && (
         <ul className="todo-list">

@@ -6,13 +6,19 @@ import { createTodo } from "./api";
 
 export default function AddTodoForm() {
   const [title, setTitle] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-    await createTodo(title);
-    setTitle("");
-    // key must be the same as in useSWR
-    await mutate("/todos");
+    setIsSubmitting(true);
+    try {
+      await createTodo(title);
+      setTitle("");
+      // key must be the same as in useSWR
+      await mutate("/todos");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -23,8 +29,8 @@ export default function AddTodoForm() {
         placeholder="What do you have to do?"
         aria-label="New todo"
       />
-      <button type="submit" disabled={title.trim() === ""}>
-        Add
+      <button type="submit" disabled={title.trim() === "" || isSubmitting}>
+        {isSubmitting ? "Adding..." : "Add"}
       </button>
     </form>
   );
