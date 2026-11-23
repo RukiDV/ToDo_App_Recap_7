@@ -8,7 +8,7 @@ type TodoItemProps = {
   todo: Todo;
 };
 
-export default function TodoItem( { todo }: TodoItemProps) {
+export default function TodoItem({ todo }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(todo.title);
 
@@ -17,15 +17,52 @@ export default function TodoItem( { todo }: TodoItemProps) {
     await mutate("/todos");
   }
 
+  function handleCancel() {
+    setDraft(todo.title);
+    setIsEditing(false);
+  }
+
+  async function handleSave() {
+    await updateTodo(todo.id, { title: draft, done: todo.done });
+    await mutate("/todos");
+    setIsEditing(false);
+  }
+
   return (
-     <li className="todo-item">
-      <label className={`todo-title ${todo.done ? "done" : ""}`}>
-        <input type="checkbox" checked={todo.done} onChange={handleToggle} />
-        {todo.title}
-      </label>
-      <button type="button" onClick={() => setIsEditing(true)}>
-        Edit
-      </button>
+    <li className="todo-item">
+      {isEditing ? (
+        <>
+          <input
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            aria-label="Edit title"
+          />
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={draft.trim() === ""}
+          >
+            Save
+          </button>
+          <button type="button" onClick={handleCancel}>
+            Cancel
+          </button>
+        </>
+      ) : (
+        <>
+          <label className={`todo-title ${todo.done ? "done" : ""}`}>
+            <input
+              type="checkbox"
+              checked={todo.done}
+              onChange={handleToggle}
+            />
+            {todo.title}
+          </label>
+          <button type="button" onClick={() => setIsEditing(true)}>
+            Edit
+          </button>
+        </>
+      )}
     </li>
   );
 }
