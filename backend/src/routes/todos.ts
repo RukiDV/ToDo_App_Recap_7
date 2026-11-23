@@ -23,3 +23,14 @@ todosRouter.post("/", async (request, response) => {
   const todo = await TodoModel.create({ title });
   response.status(201).json(toTodo(todo));
 });
+
+todosRouter.put("/:id", async (request, response) => {
+  const { id } = request.params;
+  const { title, done } = (request.body ?? {}) as Partial<NewTodo>;
+  const todo = await TodoModel.findByIdAndUpdate(id, { title, done }, { returnDocument: "after", runValidators: true });
+  if (!todo) {
+    response.status(404).json({ error: "Todo not found" });
+    return;
+  }
+  response.json(toTodo(todo));
+});
