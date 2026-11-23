@@ -1,7 +1,7 @@
 import { mutate } from "swr";
 import { useState } from "react";
 
-import { updateTodo } from "./api";
+import { deleteTodo, updateTodo } from "./api";
 import type { Todo } from "./types";
 
 type TodoItemProps = {
@@ -26,6 +26,11 @@ export default function TodoItem({ todo }: TodoItemProps) {
     await updateTodo(todo.id, { title: draft, done: todo.done });
     await mutate("/todos");
     setIsEditing(false);
+  }
+
+  async function handleDelete() {
+    await deleteTodo(todo.id);
+    await mutate("/todos");
   }
 
   return (
@@ -60,6 +65,9 @@ export default function TodoItem({ todo }: TodoItemProps) {
           </label>
           <button type="button" onClick={() => setIsEditing(true)}>
             Edit
+          </button>
+          <button type="button" onClick={handleDelete}>
+            Delete
           </button>
         </>
       )}
