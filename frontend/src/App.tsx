@@ -1,5 +1,6 @@
 import useSWR from "swr";
 
+import AddTodoForm from "./AddTodoForm";
 import { fetcher } from "./api";
 import type { Todo } from "./types";
 
@@ -9,6 +10,7 @@ export default function App() {
   return (
     <main>
       <h1>Todos</h1>
+      <AddTodoForm />
       {isLoading && <p>Loading todos...</p>}
       {todos && todos.length === 0 && <p>No todos yet. Nothing to do!</p>}
       {todos && todos.length > 0 && (
