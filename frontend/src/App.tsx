@@ -1,16 +1,12 @@
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 
 import AddTodoForm from "./AddTodoForm";
-import { fetcher, updateTodo } from "./api";
+import { fetcher } from "./api";
+import TodoItem from "./TodoItem";
 import type { Todo } from "./types";
 
 export default function App() {
   const { data: todos, isLoading } = useSWR<Todo[]>("/todos", fetcher);
-
-  async function handleToggle(todo: Todo) {
-    await updateTodo(todo.id, { title: todo.title, done: !todo.done });
-    await mutate("/todos");
-  }
 
   return (
     <main>
@@ -21,12 +17,7 @@ export default function App() {
       {todos && todos.length > 0 && (
         <ul className="todo-list">
           {todos.map((todo) => (
-            <li key={todo.id} className="todo-item">
-              <label className={`todo-title ${todo.done ? "done" : ""}`}>
-                <input type="checkbox" checked={todo.done} onChange={() => handleToggle(todo)} />
-                {todo.title}
-              </label>
-            </li>
+            <TodoItem key={todo.id} todo={todo} />
           ))}
         </ul>
       )}
