@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import AddTodoForm from "./AddTodoForm";
 import { fetcher } from "./api";
+import ThemeToggle from "./ThemeToggle";
 import TodoItem from "./TodoItem";
 import type { Todo } from "./types";
 
@@ -32,38 +33,47 @@ export default function App() {
 
   return (
     <main>
-      <h1>Todos</h1>
-      <AddTodoForm />
-      {/* filter the todos */}
-      <div className="filter-buttons">
-        {filters.map(({ value, label }) => (
-          <button
-            key={value}
-            type="button"
-            aria-pressed={filter === value}
-            onClick={() => setFilter(value)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      {isLoading && <p>Loading todos...</p>}
-      {error && (
-        <div>
-          <p role="alert">Could not load the todos. Is the backend running?</p>
-          <button type="button" onClick={() => mutate()}>
-            Try again
-          </button>
-        </div>
-      )}
-      {!error && todos && todos.length === 0 && <p>{emptyMessages[filter]}</p>}
-      {!error && todos && todos.length > 0 && (
-        <ul className="todo-list">
-          {todos.map((todo) => (
-            <TodoItem key={todo.id} todo={todo} />
+      <header className="app-header">
+        <h1>Todos</h1>
+        <ThemeToggle />
+      </header>
+      <div className="card">
+        <AddTodoForm />
+        {/* filter the todos */}
+        <div className="filter-buttons">
+          {filters.map(({ value, label }) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={filter === value}
+              onClick={() => setFilter(value)}
+            >
+              {label}
+            </button>
           ))}
-        </ul>
-      )}
+        </div>
+        {isLoading && <p>Loading todos...</p>}
+        {error && (
+          <div>
+            <p role="alert">
+              Could not load the todos. Is the backend running?
+            </p>
+            <button type="button" onClick={() => mutate()}>
+              Try again
+            </button>
+          </div>
+        )}
+        {!error && todos && todos.length === 0 && (
+          <p>{emptyMessages[filter]}</p>
+        )}
+        {!error && todos && todos.length > 0 && (
+          <ul className="todo-list">
+            {todos.map((todo) => (
+              <TodoItem key={todo.id} todo={todo} />
+            ))}
+          </ul>
+        )}
+      </div>
     </main>
   );
 }

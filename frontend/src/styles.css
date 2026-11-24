@@ -1,3 +1,38 @@
+:root {
+  color-scheme: light; /* form controls and scrollbars follow the theme */
+
+  --bg: #fdf4f7;
+  --surface: #ffffff;
+  --text: #2a1520;
+  --muted: #7a5a68;
+  --border: #f1d5e0;
+  --border-strong: #a98093; /* borders of inputs and buttons */
+  --accent: #db2777;
+  --accent-contrast: #ffffff; /* text on top of --accent */
+  --accent-soft: #fdf2f8;
+  --danger: #b91c1c;
+  --danger-soft: #fee2e2;
+  --shadow: 0 1px 3px rgba(42, 21, 32, 0.08);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #170f14;
+  --surface: #231820;
+  --text: #f7e9ef;
+  --muted: #c4a3b3;
+  --border: #3a2531;
+  --border-strong: #8a6a7b;
+  --accent: #f472b6;
+  --accent-contrast: #170f14;
+  --accent-soft: #3b1f2f;
+  --danger: #f87171;
+  --danger-soft: #451a1f;
+  --shadow: none;
+}
+
+/* ---------- Base ---------- */
 * {
   box-sizing: border-box;
 }
@@ -5,8 +40,8 @@
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
-  background: #f4f4f5;
-  color: #18181b;
+  background: var(--bg);
+  color: var(--text);
 }
 
 main {
@@ -15,6 +50,34 @@ main {
   padding: 0 1rem;
 }
 
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  margin: 0;
+  color: var(--accent);
+}
+
+/* The white card around the form, the filters and the list */
+.card {
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow);
+}
+
+/* Keyboard focus: the same visible ring everywhere */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Form ---------- */
 .todo-form {
   display: flex;
   gap: 0.5rem;
@@ -27,16 +90,28 @@ main {
 
 input:not([type="checkbox"]) {
   padding: 0.5rem;
-  border: 1px solid #a1a1aa;
+  border: 1px solid var(--border-strong);
   border-radius: 0.25rem;
+  background: var(--surface);
+  color: var(--text);
 }
 
+input[type="checkbox"] {
+  accent-color: var(--accent);
+}
+
+/* ---------- Buttons ---------- */
 button {
   padding: 0.5rem 0.75rem;
-  border: 1px solid #a1a1aa;
+  border: 1px solid var(--border-strong);
   border-radius: 0.25rem;
-  background: white;
+  background: var(--surface);
+  color: var(--text);
   cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--accent-soft);
 }
 
 button:disabled {
@@ -44,17 +119,58 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* The main action: "Add" */
+.todo-form button[type="submit"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.todo-form button[type="submit"]:hover:not(:disabled) {
+  background: var(--accent);
+  filter: brightness(0.92);
+}
+
+/* ---------- Filters ---------- */
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.filter-buttons button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* ---------- List ---------- */
 .todo-list {
   list-style: none;
+  margin: 0;
   padding: 0;
 }
 
 .todo-item {
   display: flex;
+  flex-wrap: wrap; /* an error message gets its own line under the buttons */
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0;
-  border-bottom: 1px solid #d4d4d8;
+  border-bottom: 1px solid var(--border);
+}
+
+.todo-item:last-child {
+  border-bottom: none;
+}
+
+.todo-item input:not([type="checkbox"]) {
+  flex: 1;
+}
+
+.todo-item [role="alert"] {
+  flex-basis: 100%;
+  margin: 0;
 }
 
 .todo-title {
@@ -66,11 +182,33 @@ button:disabled {
 
 .todo-title.done {
   text-decoration: line-through;
-  color: #71717a;
+  color: var(--muted);
 }
 
+/* ---------- Icon buttons (edit, delete, save, cancel) ---------- */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+}
+
+.icon-button:hover:not(:disabled) {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.icon-button.danger:hover:not(:disabled) {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+/* ---------- Messages ---------- */
 [role="alert"] {
-  color: #b91c1c;
+  color: var(--danger);
 }
 
 .visually-hidden {
@@ -80,56 +218,4 @@ button:disabled {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
-}
-
-.filter-buttons {
-  display: flex;
-  gap: 0.5rem;
-  margin: 1rem 0;
-}
-
-.filter-buttons button[aria-pressed="true"] {
-  background: #18181b;
-  border-color: #18181b;
-  color: white;
-}
-
-/* Icon-only buttons (edit, delete, save, cancel) */
-.icon-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.4rem;
-  border-color: transparent;
-  background: transparent;
-  color: #52525b;
-}
-
-.icon-button:hover:not(:disabled) {
-  background: #e4e4e7;
-  color: #18181b;
-}
-
-.icon-button.danger:hover:not(:disabled) {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-.icon-button:focus-visible {
-  outline: 2px solid #2563eb;
-  outline-offset: 2px;
-}
-
-/* A row can wrap, so an error message gets its own line under the buttons. */
-.todo-item {
-  flex-wrap: wrap;
-}
-
-.todo-item input:not([type="checkbox"]) {
-  flex: 1;
-}
-
-.todo-item [role="alert"] {
-  flex-basis: 100%;
-  margin: 0;
 }
