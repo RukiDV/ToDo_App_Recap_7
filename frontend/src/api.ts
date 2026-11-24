@@ -14,13 +14,26 @@ export async function fetcher<T>(path: string): Promise<T> {
   return response.json();
 }
 
+// fetch only throws when the server cannot be reached. Give that case a message for the user.
+async function request(url: string, options?: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, options);
+  } catch {
+    throw new Error("Could not reach the server. Is the backend running?");
+  }
+}
+
 async function throwApiError(response: Response): Promise<never> {
-  const body = (await response.json().catch(() => null)) as { error?: string } | null;
-  throw new Error(body?.error ?? `Request failed with status ${response.status}`);
+  const body = (await response.json().catch(() => null)) as {
+    error?: string;
+  } | null;
+  throw new Error(
+    body?.error ?? `Request failed with status ${response.status}`
+  );
 }
 
 export async function createTodo(title: string): Promise<Todo> {
-  const response = await fetch(`${API_URL}/todos`, {
+  const response = await request(`${API_URL}/todos`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ title }),
@@ -28,14 +41,14 @@ export async function createTodo(title: string): Promise<Todo> {
   if (!response.ok) {
     await throwApiError(response);
   }
-  return response.json(); 
+  return response.json();
 }
 
 export async function updateTodo(id: string, todo: NewTodo): Promise<Todo> {
-  const response = await fetch(`${API_URL}/todos/${id}`, {
+  const response = await request(`${API_URL}/todos/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify( todo ),
+    body: JSON.stringify(todo),
   });
   if (!response.ok) {
     await throwApiError(response);
@@ -44,7 +57,7 @@ export async function updateTodo(id: string, todo: NewTodo): Promise<Todo> {
 }
 
 export async function deleteTodo(id: string): Promise<void> {
-  const response = await fetch(`${API_URL}/todos/${id}`, {
+  const response = await request(`${API_URL}/todos/${id}`, {
     method: "DELETE",
   });
   if (!response.ok) {

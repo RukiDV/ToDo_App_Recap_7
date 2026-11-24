@@ -11,26 +11,44 @@ type TodoItemProps = {
 export default function TodoItem({ todo }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(todo.title);
+  const [error, setError] = useState("");
 
   async function handleToggle() {
-    await updateTodo(todo.id, { title: todo.title, done: !todo.done });
-    await mutate("/todos");
+    setError("");
+    try {
+      await updateTodo(todo.id, { title: todo.title, done: !todo.done });
+      await mutate("/todos");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    }
   }
 
   function handleCancel() {
     setDraft(todo.title);
+    setError("");
     setIsEditing(false);
   }
 
   async function handleSave() {
-    await updateTodo(todo.id, { title: draft, done: todo.done });
-    await mutate("/todos");
-    setIsEditing(false);
+    setError("");
+    try {
+      await updateTodo(todo.id, { title: draft, done: todo.done });
+      await mutate("/todos");
+      // Only reached when the save worked. After a failure the field stays open.
+      setIsEditing(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    }
   }
 
   async function handleDelete() {
-    await deleteTodo(todo.id);
-    await mutate("/todos");
+    setError("");
+    try {
+      await deleteTodo(todo.id);
+      await mutate("/todos");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    }
   }
 
   return (
@@ -71,6 +89,7 @@ export default function TodoItem({ todo }: TodoItemProps) {
           </button>
         </>
       )}
+      {error && <p role="alert">{error}</p>}
     </li>
   );
 }
