@@ -21,12 +21,20 @@ A response contains exactly these three fields: no `_id` and no `__v`.
 | `DELETE /api/todos/:id` |                       | 204, no body             | 404 `{ "error": "Todo not found" }`                  |
 | any other route         |                       |                          | 404 `{ "error": "Not found" }`                       |
 
+- `GET /api/todos` takes the optional query parameter `done`. `?done=true` returns only the done todos, `?done=false` only the open ones. Without it, or with any other value, all todos are returned.
 - `POST` creates a todo with `done: false`. The title is trimmed. A missing or empty title gives 400.
 - `PUT` replaces `title` and `done`. Always send both, also when you only change one of them.
 - A body that is not valid JSON gives 400. An `id` that is not a valid ObjectId gives 404.
 - All errors look like `{ "error": "<message>" }`. An unexpected error gives 500 `{ "error": "Internal server error" }` without details.
 
 ## Examples
+
+```http
+GET /api/todos?done=true
+
+200
+[{ "id": "6aff79b9cd3147d2599d2f45", "title": "Buy oat milk", "done": true }]
+```
 
 ```http
 POST /api/todos
