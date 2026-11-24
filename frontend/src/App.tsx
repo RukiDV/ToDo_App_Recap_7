@@ -6,15 +6,30 @@ import TodoItem from "./TodoItem";
 import type { Todo } from "./types";
 
 export default function App() {
-  const { data: todos, isLoading } = useSWR<Todo[]>("/todos", fetcher);
+  const {
+    data: todos,
+    isLoading,
+    error,
+    mutate,
+  } = useSWR<Todo[]>("/todos", fetcher);
 
   return (
     <main>
       <h1>Todos</h1>
       <AddTodoForm />
       {isLoading && <p>Loading todos...</p>}
-      {todos && todos.length === 0 && <p>No todos yet. Nothing to do!</p>}
-      {todos && todos.length > 0 && (
+      {error && (
+        <div>
+          <p role="alert">Could not load the todos. Is the backend running?</p>
+          <button type="button" onClick={() => mutate()}>
+            Try again
+          </button>
+        </div>
+      )}
+      {!error && todos && todos.length === 0 && (
+        <p>No todos yet. Add your first todo above.</p>
+      )}
+      {!error && todos && todos.length > 0 && (
         <ul className="todo-list">
           {todos.map((todo) => (
             <TodoItem key={todo.id} todo={todo} />
