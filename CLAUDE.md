@@ -27,6 +27,8 @@ A full-stack todo app: an Express 5 API with MongoDB in `backend/`, a React app 
 - The API follows `docs/api-contract.md`: paths, status codes, field names (`id`, `title`, `done`) and the error format `{ "error": "..." }`.
 - Routes call the mongoose model directly. No extra layers.
 - **Never read, print, log or commit `backend/.env`.** It holds the connection string. `.env.example` has placeholders only.
-- CORS is set up in `backend/src/app.ts` for `http://localhost:5173`. Do not change it and do not use `*`.
+- CORS is set up in `backend/src/app.ts`. The allowed origin comes from the environment variable `CORS_ORIGIN` (the deployed frontend), and defaults to `http://localhost:5173`. Do not use `*`.
+- The frontend reads the API address from `VITE_API_URL` (set before the build, ends with `/api`, no secrets) and defaults to `http://localhost:3001/api`.
+- Deployment: backend as a Render Web Service, frontend as a Render Static Site. Secrets such as `MONGODB_URI` are only set in the Render dashboard, never in the repository, a README or a chat. Do not set `PORT` or `NODE_ENV` by hand.
 - Use async/await. Name request parameters `request` and `response`. No `any`.
-- Only do what the current issue asks for. No authentication, no tests, no deployment yet.
+- Only do what the current issue asks for. No authentication and no tests yet.
