@@ -1,7 +1,6 @@
-import { mutate } from "swr";
 import { useState } from "react";
 
-import { deleteTodo, updateTodo } from "./api";
+import { deleteTodo, refreshTodos, updateTodo } from "./api";
 import type { Todo } from "./types";
 
 type TodoItemProps = {
@@ -17,7 +16,7 @@ export default function TodoItem({ todo }: TodoItemProps) {
     setError("");
     try {
       await updateTodo(todo.id, { title: todo.title, done: !todo.done });
-      await mutate("/todos");
+      await refreshTodos();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     }
@@ -33,7 +32,7 @@ export default function TodoItem({ todo }: TodoItemProps) {
     setError("");
     try {
       await updateTodo(todo.id, { title: draft, done: todo.done });
-      await mutate("/todos");
+      await refreshTodos();
       // Only reached when the save worked. After a failure the field stays open.
       setIsEditing(false);
     } catch (err) {
@@ -45,7 +44,7 @@ export default function TodoItem({ todo }: TodoItemProps) {
     setError("");
     try {
       await deleteTodo(todo.id);
-      await mutate("/todos");
+      await refreshTodos();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     }
