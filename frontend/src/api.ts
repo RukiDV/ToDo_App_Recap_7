@@ -1,8 +1,11 @@
 import { mutate } from "swr";
 import type { Todo, NewTodo } from "./types";
 
-// The backend allows requests from http://localhost:5173 (CORS), so the frontend can call it directly.
-export const API_URL = "http://localhost:3001/api";
+// VITE_API_URL is the address of the deployed API (ends with /api, no trailing slash).
+// Vite writes it into the JavaScript when the app is built.
+// Without it (on your laptop) the local backend is used.
+export const API_URL: string =
+  import.meta.env.VITE_API_URL ?? "http://localhost:3001/api";
 
 // Put all functions that talk to the API here (fetcher for `useSWR`, create, update, delete),
 // so that your components never call `fetch` themselves.
