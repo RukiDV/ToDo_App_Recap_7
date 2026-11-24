@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { deleteTodo, refreshTodos, updateTodo } from "./api";
+import { CheckIcon, CloseIcon, PencilIcon, TrashIcon } from "./Icons";
 import type { Todo } from "./types";
 
 type TodoItemProps = {
@@ -61,13 +62,22 @@ export default function TodoItem({ todo }: TodoItemProps) {
           />
           <button
             type="button"
+            className="icon-button"
+            aria-label="Save todo"
+            title="Save"
             onClick={handleSave}
             disabled={draft.trim() === ""}
           >
-            Save
+            <CheckIcon />
           </button>
-          <button type="button" onClick={handleCancel}>
-            Cancel
+          <button
+            type="button"
+            className="icon-button"
+            aria-label="Cancel editing"
+            title="Cancel"
+            onClick={handleCancel}
+          >
+            <CloseIcon />
           </button>
         </>
       ) : (
@@ -80,11 +90,23 @@ export default function TodoItem({ todo }: TodoItemProps) {
             />
             {todo.title}
           </label>
-          <button type="button" onClick={() => setIsEditing(true)}>
-            Edit
+          <button
+            type="button"
+            className="icon-button"
+            aria-label="Edit todo"
+            title="Edit"
+            onClick={() => setIsEditing(true)}
+          >
+            <PencilIcon />
           </button>
-          <button type="button" onClick={handleDelete}>
-            Delete
+          <button
+            type="button"
+            className="icon-button danger"
+            aria-label="Delete todo"
+            title="Delete"
+            onClick={handleDelete}
+          >
+            <TrashIcon />
           </button>
         </>
       )}
