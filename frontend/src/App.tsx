@@ -14,6 +14,12 @@ const filters: { value: Filter; label: string }[] = [
   { value: "done", label: "Done" },
 ];
 
+const emptyMessages: Record<Filter, string> = {
+  all: "No todos yet. Add your first todo above.",
+  open: "Nothing left to do!",
+  done: "Nothing is done yet.",
+};
+
 export default function App() {
   const [filter, setFilter] = useState<Filter>("all");
   const key = filter === "all" ? "/todos" : `/todos?done=${filter === "done"}`;
@@ -50,9 +56,7 @@ export default function App() {
           </button>
         </div>
       )}
-      {!error && todos && todos.length === 0 && (
-        <p>No todos yet. Add your first todo above.</p>
-      )}
+      {!error && todos && todos.length === 0 && <p>{emptyMessages[filter]}</p>}
       {!error && todos && todos.length > 0 && (
         <ul className="todo-list">
           {todos.map((todo) => (
