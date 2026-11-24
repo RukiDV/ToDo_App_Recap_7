@@ -1,3 +1,4 @@
+import { mutate } from "swr";
 import type { Todo, NewTodo } from "./types";
 
 // The backend allows requests from http://localhost:5173 (CORS), so the frontend can call it directly.
@@ -30,6 +31,11 @@ async function throwApiError(response: Response): Promise<never> {
   throw new Error(
     body?.error ?? `Request failed with status ${response.status}`
   );
+}
+
+// Reload every cached todo list: "/todos", "/todos?done=true" and "/todos?done=false".
+export function refreshTodos() {
+  return mutate((key) => typeof key === "string" && key.startsWith("/todos"));
 }
 
 export async function createTodo(title: string): Promise<Todo> {

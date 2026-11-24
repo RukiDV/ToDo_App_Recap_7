@@ -1,8 +1,7 @@
 import { useState } from "react";
 import type { SubmitEvent } from "react";
-import { mutate } from "swr";
 
-import { createTodo } from "./api";
+import { createTodo, refreshTodos } from "./api";
 
 export default function AddTodoForm() {
   const [title, setTitle] = useState("");
@@ -16,8 +15,7 @@ export default function AddTodoForm() {
     try {
       await createTodo(title);
       setTitle("");
-      // key must be the same as in useSWR
-      await mutate("/todos");
+      await refreshTodos();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
